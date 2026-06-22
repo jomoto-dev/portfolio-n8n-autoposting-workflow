@@ -1,0 +1,29 @@
+# Environment variables / secrets
+.env
+.env.*
+*.env
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# n8n private exports / backups
+workflow_original.json
+workflow_private.json
+workflow_secret.json
+*_private.json
+*_secret.json
+*_backup.json
+*_original.json
+
+# Local notes
+memo.md
+notes.md
+
+# Temporary files
+*.tmp
+*.bak
