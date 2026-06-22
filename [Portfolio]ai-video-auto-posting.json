@@ -1,0 +1,1418 @@
+{
+  "name": "[Portfolio]ai-video-auto-posting",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "YOUR_SHEET_GID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{$json.id}}",
+            "prompt": "={{$json.prompt}}",
+            "status": "={{$json.status}}",
+            "source": "={{$json.source}}",
+            "line_message_id": "={{$json.line_message_id}}",
+            "line_user_id": "={{$json.line_user_id}}",
+            "created_at": "={{$json.created_at}}",
+            "started_at": "={{$json.started_at}}",
+            "Sent_to_createvideo_at": "={{$json.Sent_to_createvideo_at}}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "line_user_id",
+              "displayName": "line_user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "line_message_id",
+              "displayName": "line_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sent_to_createvideo_at",
+              "displayName": "Sent_to_createvideo_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "locationDefine": {
+            "values": {}
+          }
+        }
+      },
+      "id": "7320448b-0168-47ab-b985-d5343bae1a03",
+      "name": "Get tracks",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        896,
+        0
+      ],
+      "typeVersion": 4.7
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "WebhookID",
+        "options": {
+          "responseCode": {
+            "values": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "811508c1-45b0-4cbf-b9a1-766ba8fecc5b",
+      "name": "Webhook",
+      "webhookId": "WebhookID"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e083f5bd-e823-41b7-87cd-4f6ae714fd89",
+              "leftValue": "={{$json.body.events[0].type}}",
+              "rightValue": "message",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "d571c8db-7e0d-40e0-ba6c-f4db0216772e",
+              "leftValue": "={{$json.body.events[0].message.type}}",
+              "rightValue": "text",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        336,
+        16
+      ],
+      "id": "3c15977a-9bd4-4fdf-bd7c-90a7d9d0cbbc",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "26d5e884-d764-4f29-97e8-6a53a2f55cf6",
+              "name": "id",
+              "value": "={{$json.body.events[0].webhookEventId || $json.body.events[0].message.id}}",
+              "type": "string"
+            },
+            {
+              "id": "6a9a5b94-5e3b-4b98-87da-a16e1ab9fb4a",
+              "name": "prompt",
+              "value": "={{$json.body.events[0].message.text}}",
+              "type": "string"
+            },
+            {
+              "id": "3e89e02f-1187-492e-b38d-1c360644bf82",
+              "name": "status",
+              "value": "queued",
+              "type": "string"
+            },
+            {
+              "id": "e102c130-8f62-45e9-a9e2-e3ab775e6dec",
+              "name": "source",
+              "value": "LINE",
+              "type": "string"
+            },
+            {
+              "id": "23b357c9-94a6-407d-b081-647f9b1cf035",
+              "name": "line_user_id",
+              "value": "={{$json.body.events[0].source.userId || \"\"}}",
+              "type": "string"
+            },
+            {
+              "id": "e9b4d2ee-d6f4-4e67-b44d-620ac61c9995",
+              "name": "line_message_id",
+              "value": "={{$json.body.events[0].message.id || \"\"}}",
+              "type": "string"
+            },
+            {
+              "id": "d502b6f5-66b8-4027-8970-34825b8bba60",
+              "name": "=created_at",
+              "value": "={{ new Date().toISOString() }}",
+              "type": "string"
+            },
+            {
+              "id": "f458f33a-5199-4d56-87be-ff8c198b3eb9",
+              "name": "started_at",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "212439b2-3a2f-44dc-9422-fe4f6bbf60f5",
+              "name": "completed_at",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "a7200b65-b240-4697-a8d2-3c4c04f0d3cc",
+              "name": "error_message",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "84b971d9-3756-4060-8857-8aa525c980a9",
+              "name": "notes",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "a8304310-1f73-4f7f-bfed-d080d3b2a2f7",
+              "name": "duration",
+              "value": "={{$json.duration || \"\"}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "c563f443-2bcc-4303-a0c9-d6565e3d5a4c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        384
+      ],
+      "id": "ff028232-eb3d-467a-b4ee-359b1a80838b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "YOUR_SHEET_GID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        384
+      ],
+      "id": "95231db8-d098-4832-b5d8-5f34a904f2ba",
+      "name": "Get row(s) in sheet"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d404b7a1-d017-4cf0-9dc2-d1e5e8a61307",
+              "leftValue": "={{$json.status}}",
+              "rightValue": "queued",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        656,
+        384
+      ],
+      "id": "38581522-b224-484b-b511-8554d86528f5",
+      "name": "Filter"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        992,
+        384
+      ],
+      "id": "4adf2ab6-8b49-4d65-abbd-e101f4f8161c",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "YOUR_SHEET_GID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{$json.id}}",
+            "prompt": "={{$json.prompt}}",
+            "status": "processing",
+            "source": "={{$json.source}}",
+            "line_user_id": "={{$json.line_user_id}}",
+            "line_message_id": "={{$json.line_message_id}}",
+            "created_at": "={{$json.created_at}}",
+            "started_at": "={{ new Date().toISOString() }}",
+            "Sent_to_createvideo_at": "={{$json.Sent_to_createvideo_at}}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "line_user_id",
+              "displayName": "line_user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "line_message_id",
+              "displayName": "line_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sent_to_createvideo_at",
+              "displayName": "Sent_to_createvideo_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1264,
+        384
+      ],
+      "id": "2056f182-a292-4e77-8ef2-67d9c3efc021",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIALS_ID",
+          "name": "YOUR_GOOGLE_SHEETS_CREDENTIALS_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "YOUR_SHEET_GID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        832
+      ],
+      "id": "58e76aa1-339c-4ef8-8066-846a3a56d6c9",
+      "name": "Get row(s) in sheet1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4729f771-142a-481f-88de-9f576cf22252",
+              "name": "clean_prompt",
+              "value": "={{($json.prompt || \"\").replace(/\\r?\\n/g, \" \").replace(/\"/g, \"'\")}}",
+              "type": "string"
+            },
+            {
+              "id": "9a99517a-6db1-4d5c-bf92-5bc6f6cefc5a",
+              "name": "duration",
+              "value": "={{$json.duration || 8}}",
+              "type": "string"
+            },
+            {
+              "id": "5a5ffa23-f0d1-4140-ac66-fe4131b3571b",
+              "name": "id",
+              "value": "={{$json.id}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        848,
+        832
+      ],
+      "id": "41d15bbd-f4c2-4aa2-a6d2-a2557693d3d2",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -48,
+        832
+      ],
+      "id": "f0510bda-548d-427b-a3d4-3c2ef15f7f54",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.replicate.com/xxxxxx",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_REPLICATE_API_TOKEN"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"input\": {\n    \"prompt\": {{$json[\"prompt\"].toJsonString()}},\n    \"duration\": x,\n    \"resolution\": \"xxxp\",\n    \"aspect_ratio\": \"x:x\"\n  },\n  \"webhook\":\"YOUR_WEBHOOK_URL\",\n  \"webhook_events_filter\": [\"completed\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2240,
+        816
+      ],
+      "id": "9b95b1af-be51-4572-a306-339eae282787",
+      "name": "createvideo",
+      "retryOnFail": false,
+      "maxTries": 5,
+      "waitBetweenTries": 5000,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "YOUR_SHEET_GID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "id",
+              "lookupValue": "={{$node[\"Edit Fields1\"].json[\"id\"]}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        832
+      ],
+      "id": "e193476a-8d1c-49db-b7ca-74339e862b34",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIALS_ID",
+          "name": "YOUR_GOOGLE_SHEETS_CREDENTIALS_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c1d83cce-197e-4ada-8bcd-a2c585471afa",
+              "leftValue": "={{$json.status}}",
+              "rightValue": "=processing",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1536,
+        832
+      ],
+      "id": "1734142f-9ee9-404b-8b56-f9af2cc7809f",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "url": "={{$json.video_url}}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2000,
+        1744
+      ],
+      "id": "ff835daf-16c1-4f2d-9b30-475eb27c52e0",
+      "name": "HTTP Request2",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d2b4a8c1-41bf-458e-8b56-a2da67215c98",
+              "name": "video_url",
+              "value": "={{$json.body.output}}",
+              "type": "string"
+            },
+            {
+              "id": "5f9d581c-b3a2-45ae-9dfd-b296eaa7388a",
+              "name": "id",
+              "value": "={{$json.body.id}}",
+              "type": "string"
+            },
+            {
+              "id": "0fe33e83-71db-4ab0-8d49-740dc5bca856",
+              "name": "status",
+              "value": "={{$json.body.status}}",
+              "type": "string"
+            },
+            {
+              "id": "58d7b6f1-16d4-40ef-94ed-5a592fe21a70",
+              "name": "prompt",
+              "value": "={{$json.body.input?.prompt || \"\"}}",
+              "type": "string"
+            },
+            {
+              "id": "dc428cc0-f49c-4afd-9d8a-795b5b0fb63f",
+              "name": "file_name",
+              "value": "={{\"video_\" + Date.now() + \".mp4\"}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1632,
+        1744
+      ],
+      "id": "8642482c-e96a-4be6-ac35-450bf83517ab",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "name": "={{$json.file_name}}",
+        "driveId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_DRIVE_ID",
+          "mode": "list",
+          "cachedResultName": "YOUR_GOOGLE_DRIVE_NAME",
+          "cachedResultUrl": "YOUR_GOOGLE_DRIVE_URL"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "YOUR_FOLDER_ID",
+          "mode": "list",
+          "cachedResultName": "YOUR_FOLDER_NAME",
+          "cachedResultUrl": "YOUR_FOLDER_URL"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2352,
+        1744
+      ],
+      "id": "c5412eff-8622-4170-960b-4e7bbf4dbb29",
+      "name": "Upload file",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 3
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "WebhookID",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        1136,
+        1744
+      ],
+      "id": "3ae8b272-0e5f-491a-93ad-c6c8032e502d",
+      "name": "Webhook1",
+      "webhookId": "WebhookID"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-flash-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=あなたはYouTube動画のタイトルと説明文を作るプロです。\n以下の動画プロンプトをもとに、YouTube Shorts向けのタイトルと説明文を作ってください。\n\n【動画プロンプト】\n{{$node[\"Edit Fields2\"].json[\"prompt\"]}}\n\n【出力ルール】\n\n■ title_youtube（YouTubeタイトル）\n-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n■ description_youtube（YouTube説明文）\n- 説明文は下記のものを記載\n　xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n\n■ 出力形式\n- 絵文字を1〜2個含めてもよい\n- 必ず以下のJSON形式で出力する(他の文章は書かない)\n\n{\n  \"title_youtube\": \"タイトル\",\n  \"description_youtube\": \"説明文\",\n}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        2544,
+        1744
+      ],
+      "id": "8964ba1a-c3b6-440a-8453-767052e1404b",
+      "name": "Message a model1",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ JSON.parse($json.content.parts[0].text.replace(/```json\\n?/g, '').replace(/```/g, '').trim()).title_youtube }}\n",
+        "regionCode": "US",
+        "categoryId": "=19",
+        "options": {
+          "description": "={{ JSON.parse($json.content.parts[0].text.replace(/```json\\n?/g, '').replace(/```/g, '').trim()).description_youtube }}",
+          "privacyStatus": "public"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        3584,
+        1712
+      ],
+      "id": "3bb715b3-dd17-44e1-8dc4-373f3b6d33f7",
+      "name": "Upload a video",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "maxTries": 2,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Upload file').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3216,
+        1712
+      ],
+      "id": "f0c17d63-c69d-475a-bf92-cf2bd6bff978",
+      "name": "Download file"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "YOUR_SHEET_GID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        1216
+      ],
+      "id": "d86d809d-f7bb-44c6-ac37-8420ca9b1e7d",
+      "name": "Get row(s) in sheet3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d404b7a1-d017-4cf0-9dc2-d1e5e8a61307",
+              "leftValue": "={{$json.status}}",
+              "rightValue": "processing",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        1216
+      ],
+      "id": "b782954c-54cc-48ef-8140-a21ebf3b1abd",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        1216
+      ],
+      "id": "65c6b3dc-5c05-43f6-9ec7-bd145a771fa0",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "YOUR_SHEET_GID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "YOUR_SPREADSHEET_URL"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{$json.id}}",
+            "prompt": "={{$json.prompt}}",
+            "status": "done",
+            "source": "={{$json.source}}",
+            "line_user_id": "={{$json.line_user_id}}",
+            "line_message_id": "={{$json.line_message_id}}",
+            "created_at": "={{$json.created_at}}",
+            "Sent_to_createvideo_at": "={{ new Date().toISOString() }}",
+            "started_at": "={{$json.started_at}}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "line_user_id",
+              "displayName": "line_user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "line_message_id",
+              "displayName": "line_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "started_at",
+              "displayName": "started_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sent_to_createvideo_at",
+              "displayName": "Sent_to_createvideo_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "post_key",
+              "displayName": "post_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1280,
+        1216
+      ],
+      "id": "73245165-11a7-4af9-a214-08a8e376219e",
+      "name": "Update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_GOOGLE_SHEETS_CREDENTIALS_ID",
+          "name": "YOUR_GOOGLE_SHEETS_CREDENTIALS_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        1232
+      ],
+      "id": "65a7ebb0-0006-459f-a6c3-6a51a5eaf6a6",
+      "name": "Schedule Trigger2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get tracks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "createvideo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Upload a video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "424c74b2-d0ba-4ac0-b118-5a4591e537de",
+  "meta": {
+    "instanceId": "REDACTED"
+  },
+  "id": "OU7JfYNAMXSCJZ8O",
+  "tags": []
+}
